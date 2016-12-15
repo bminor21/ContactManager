@@ -20,6 +20,10 @@ public class ContactInformation {
 		return id;
 	}
 	
+	public void setId( int i ){
+		id = i;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}

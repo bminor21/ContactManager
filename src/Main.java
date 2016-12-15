@@ -38,6 +38,8 @@ public class Main {
 			
 			resp = getMainMenuResponse();
 		}
+		
+		manager.close();
 	}
 	
 	private static int getMainMenuResponse() {
