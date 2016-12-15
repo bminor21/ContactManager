@@ -11,6 +11,7 @@ public class Main {
 	/* Static init block */
 	static{
 		scanner = new Scanner( System.in );
+		manager = new ContactManager();
 	}
 	
 	public static void main(String[] args) {

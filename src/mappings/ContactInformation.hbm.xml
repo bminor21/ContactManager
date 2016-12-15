@@ -4,7 +4,7 @@
  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
 
 <hibernate-mapping>
-   <class name="ContactInformation" table="ContactInformation">
+   <class name="ContactInformation" table="CONTACTS">
       <meta attribute="class-description">
          This class contains details about Contact Information. 
       </meta>
@@ -15,7 +15,7 @@
       <property name="lastName" column="last_name" type="string"/>
       <property name="address" column="address" type="string"/>
       <property name="city" column="city" type="string"/>
-      <property name="state" column="city" type="string"/>
+      <property name="state" column="state" type="string"/>
       <property name="zipCode" column="zip_code" type="string"/>
    </class>
 </hibernate-mapping>
