@@ -2,6 +2,8 @@ import java.util.Scanner;
 
 import org.hibernate.*;
 
+import common.ContactInformation;
+
 public class Main {
 
 	private static ContactManager manager;
@@ -24,23 +26,27 @@ public class Main {
 				manager.displayEntries();
 				break;
 			case 2: 
-				manager.addNewContact();
+				manager.addNewContact( buildNewContact() );
 				break;
 			case 3:
-				manager.deleteContact();
+				int del = getDeleteId();
+				manager.deleteContact( del );
 				break;
 			case 4:
-				manager.updateContact();
+				int id = getUpdateId();
+				manager.updateContact( id );
 				break;
 			default:
+				System.out.println( "Invalid command..." );
 				break;
 			}
 			
 			resp = getMainMenuResponse();
 		}
 		
-		manager.close();
+		System.exit(0);
 	}
+	
 	
 	private static int getMainMenuResponse() {
 		StringBuilder strBuilder = new StringBuilder();
@@ -59,6 +65,56 @@ public class Main {
 		
 		return scanner.nextInt();
 		
+	}
+	
+	private static int getUpdateId() {
+		
+		manager.displayEntries();
+		System.out.print("Enter ID to update: ");
+		
+		while( !scanner.hasNextInt() ){
+			System.out.println( "Invalid input..." );
+			scanner.next();
+		}
+		
+		return scanner.nextInt();
+	}
+	
+	private static int getDeleteId() {
+		
+		manager.displayEntries();
+		
+		System.out.print("Enter ID to delete: ");
+		
+		while( !scanner.hasNextInt() ){
+			System.out.println( "Invalid input..." );
+			scanner.next();
+		}
+		
+		return scanner.nextInt();
+	}
+	
+	private static ContactInformation buildNewContact() {
+		ContactInformation info = new ContactInformation();
+		System.out.print("Enter first name: ");
+		info.setFirstName( scanner.nextLine() );
+		
+		System.out.print("Enter last name: ");
+		info.setLastName( scanner.nextLine() );
+		
+		System.out.print("Enter Address: ");
+		info.setAddress( scanner.nextLine() );
+		
+		System.out.print("Enter City: ");
+		info.setCity( scanner.nextLine() );
+		
+		System.out.print("Enter State: ");
+		info.setState( scanner.nextLine() );
+		
+		System.out.print("Enter Zip Code: ");
+		info.setZipCode( scanner.nextLine() );
+		
+		return info;
 	}
 
 }

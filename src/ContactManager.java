@@ -14,59 +14,102 @@ public class ContactManager {
 
 	private static Session session;
 	private static SessionFactory sessionFactory;
+	private static Configuration configuration;
 	
 	static {
 			Configuration configuration = new Configuration();
 			configuration.addClass( ContactInformation.class );
 			configuration.configure("hibernate.cfg.xml");
-			
-			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings( configuration.getProperties() ).build();
-			
-			sessionFactory = configuration.buildSessionFactory( serviceRegistry );
-			session = sessionFactory.openSession();
-			
-		} 
+	} 
 	
 	public void displayEntries(){
+		
 		Transaction tx = session.beginTransaction();
-		List contacts = session.createQuery("from ContactInformation").list();
-		for( Iterator itr = contacts.iterator(); itr.hasNext(); ){
-			ContactInformation info = (ContactInformation) itr.next();
-			System.out.println("-------------------------------------------");
-			System.out.println( info.getFirstName() + " " + info.getLastName() );
-			System.out.println( info.getAddress() );
-			System.out.println( info.getState() + " " + info.getZipCode() );
-			System.out.println("-------------------------------------------");
+		try {
+			List contacts = session.createQuery("from ContactInformation").list();
+			for( Iterator itr = contacts.iterator(); itr.hasNext(); ){
+				ContactInformation info = (ContactInformation) itr.next();
+				info.getPrintLine();
+			}
+			tx.commit();
+		} catch ( Exception E ){
+			System.out.println( "Caught error: " + E.getMessage() );
+			tx.rollback();
+		} finally {
+			closeSession();
 		}
-		tx.commit();
-}
-	
-	public void updateContact() {
-		
 	}
 	
-	public void deleteContact() {
+	public void updateContact( int id ) {
 		
-	}
-	
-	public void addNewContact() {
+		openSession();
 		Transaction tx = session.beginTransaction();
-		ContactInformation info = new ContactInformation();
-		info.setFirstName("Brett");
-		info.setLastName("Minor");
-		info.setAddress("1415 Bardshar Rd");
-		info.setCity("Sandusky");
-		info.setState("Ohio");
-		info.setZipCode("44870");
+
+		try {
+			ContactInformation info = (ContactInformation)session.get( ContactInformation.class, id );
+			session.update( info );
+			tx.commit();
+		} catch( Exception E ) {
+			System.out.println( "Caught error: " + E.getMessage() );
+			tx.rollback();
+		} finally {
+			System.out.println( "Entry has been deleted\n" );
+			closeSession();
+		}
+	}
+	
+	public void deleteContact( int id ) {
 		
+		openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			ContactInformation info = (ContactInformation)session.get( ContactInformation.class, id );
+			session.delete( info );
+			tx.commit();
+		} catch( Exception E ) {
+			System.out.println( "Caught error: " + E.getMessage() );
+			tx.rollback();
+		} finally {
+			System.out.println( "Entry has been deleted\n" );
+			closeSession();
+		}
+	}
+	
+	public void addNewContact( ContactInformation info ) {
+		openSession();
+		
+		Transaction tx = session.beginTransaction();
+		try {
 		session.save(info);
 		tx.commit();
-		displayEntries();
+		} catch( Exception E ){
+			System.out.println( "Caught error: " + E.getMessage() );
+			tx.rollback();
+		} finally {
+			displayEntries();
+			closeSession();
+		}
 	}
 	
-	public void close(){
-		session.close();
-		sessionFactory.close();
+	
+	public void openSession() {
+		
+		if( !session.isOpen() )
+		{
+			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings( configuration.getProperties() ).build();
+
+			sessionFactory = configuration.buildSessionFactory( serviceRegistry );
+			session = sessionFactory.openSession();
+		}
+	}
+	
+	public void closeSession(){
+		
+		if( session.isOpen() )
+			session.close();
+		
+		if( sessionFactory.isOpen() )
+			sessionFactory.close();
 	}
 	
 }
