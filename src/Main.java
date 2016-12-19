@@ -96,24 +96,12 @@ public class Main {
 	
 	private static ContactInformation buildNewContact() {
 		ContactInformation info = new ContactInformation();
-		System.out.print("Enter first name: ");
-		info.setFirstName( scanner.nextLine() );
-		
-		System.out.print("Enter last name: ");
-		info.setLastName( scanner.nextLine() );
-		
-		System.out.print("Enter Address: ");
-		info.setAddress( scanner.nextLine() );
-		
-		System.out.print("Enter City: ");
-		info.setCity( scanner.nextLine() );
-		
-		System.out.print("Enter State: ");
-		info.setState( scanner.nextLine() );
-		
-		System.out.print("Enter Zip Code: ");
-		info.setZipCode( scanner.nextLine() );
-		
+		info.setFirstName("Brett");
+		info.setLastName("Minor");
+		info.setAddress("123 Main St");
+		info.setCity("Somewhere");
+		info.setState("Ohio");
+		info.setZipCode("44870");
 		return info;
 	}
 
