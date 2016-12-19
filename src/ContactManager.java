@@ -14,16 +14,18 @@ public class ContactManager {
 
 	private static Session session;
 	private static SessionFactory sessionFactory;
-	private static Configuration configuration;
 	
 	static {
 			Configuration configuration = new Configuration();
 			configuration.addClass( ContactInformation.class );
 			configuration.configure("hibernate.cfg.xml");
+			
+			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings( configuration.getProperties() ).build();
+			sessionFactory = configuration.buildSessionFactory( serviceRegistry );
+			session = sessionFactory.openSession();
 	} 
 	
 	public void displayEntries(){
-		
 		Transaction tx = session.beginTransaction();
 		try {
 			List contacts = session.createQuery("from ContactInformation").list();
@@ -34,17 +36,12 @@ public class ContactManager {
 			tx.commit();
 		} catch ( Exception E ){
 			System.out.println( "Caught error: " + E.getMessage() );
-			tx.rollback();
-		} finally {
-			closeSession();
-		}
+		} 
 	}
 	
 	public void updateContact( int id ) {
 		
-		openSession();
 		Transaction tx = session.beginTransaction();
-
 		try {
 			ContactInformation info = (ContactInformation)session.get( ContactInformation.class, id );
 			session.update( info );
@@ -53,14 +50,12 @@ public class ContactManager {
 			System.out.println( "Caught error: " + E.getMessage() );
 			tx.rollback();
 		} finally {
-			System.out.println( "Entry has been deleted\n" );
-			closeSession();
+			System.out.println( "Entry has been updated\n\n" );
 		}
 	}
 	
 	public void deleteContact( int id ) {
 		
-		openSession();
 		Transaction tx = session.beginTransaction();
 		try {
 			ContactInformation info = (ContactInformation)session.get( ContactInformation.class, id );
@@ -70,14 +65,11 @@ public class ContactManager {
 			System.out.println( "Caught error: " + E.getMessage() );
 			tx.rollback();
 		} finally {
-			System.out.println( "Entry has been deleted\n" );
-			closeSession();
+			System.out.println( "Entry has been deleted\n\n" );
 		}
 	}
 	
 	public void addNewContact( ContactInformation info ) {
-		openSession();
-		
 		Transaction tx = session.beginTransaction();
 		try {
 		session.save(info);
@@ -87,19 +79,6 @@ public class ContactManager {
 			tx.rollback();
 		} finally {
 			displayEntries();
-			closeSession();
-		}
-	}
-	
-	
-	public void openSession() {
-		
-		if( !session.isOpen() )
-		{
-			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings( configuration.getProperties() ).build();
-
-			sessionFactory = configuration.buildSessionFactory( serviceRegistry );
-			session = sessionFactory.openSession();
 		}
 	}
 	

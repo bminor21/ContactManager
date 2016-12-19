@@ -26,7 +26,8 @@ public class Main {
 				manager.displayEntries();
 				break;
 			case 2: 
-				manager.addNewContact( buildNewContact() );
+				ContactInformation info = buildNewContact();
+				manager.addNewContact( info );
 				break;
 			case 3:
 				int del = getDeleteId();
